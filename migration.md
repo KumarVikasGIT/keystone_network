@@ -114,12 +114,12 @@ class MyTokenManager implements TokenManager {
 }
 
 // Use AuthInterceptor
-NetworkKit.initialize(
+KeystoneNetwork.initialize(
   baseUrl: 'https://api.example.com',
   interceptors: [
     AuthInterceptor(
       tokenManager: MyTokenManager(),
-      dioProvider: NetworkKit.dioProvider, // ✅ Keeps interceptors!
+      dioProvider: KeystoneNetwork.dioProvider, // ✅ Keeps interceptors!
     ),
   ],
 );
@@ -206,7 +206,7 @@ try {
 #### After
 ```dart
 // Just add the interceptor
-NetworkKit.initialize(
+KeystoneNetwork.initialize(
   baseUrl: 'https://api.example.com',
   interceptors: [
     RetryInterceptor(
@@ -300,7 +300,7 @@ class UserApi {
 }
 
 // Usage
-final api = UserApi(NetworkKit.dio);
+final api = UserApi(KeystoneNetwork.dio);
 final result = await api.getUser('123');
 
 result.when(
@@ -382,7 +382,7 @@ class _UserListScreenState extends State<UserListScreen> {
   
   void _loadUsers() {
     _subscription = ApiExecutor.executeAsStateStream<List<User>, dynamic>(
-      request: () => NetworkKit.dio.get('/users'),
+      request: () => KeystoneNetwork.dio.get('/users'),
       parser: (json) => (json as List).map((e) => User.fromJson(e)).toList(),
     ).listen((state) {
       setState(() => _state = state);
@@ -442,7 +442,7 @@ class ValidationError {
 }
 
 final result = await ApiExecutor.execute<User, ValidationError>(
-  request: () => NetworkKit.dio.post('/users', data: formData),
+  request: () => KeystoneNetwork.dio.post('/users', data: formData),
   parser: (json) => User.fromJson(json),
   errorParser: (json) => ValidationError.fromJson(json),
 );
@@ -498,15 +498,15 @@ Future<void> loadDashboard() async {
 Future<void> loadDashboard() async {
   final results = await Future.wait([
     ApiExecutor.execute<User, dynamic>(
-      request: () => NetworkKit.dio.get('/user'),
+      request: () => KeystoneNetwork.dio.get('/user'),
       parser: (json) => User.fromJson(json),
     ),
     ApiExecutor.execute<Stats, dynamic>(
-      request: () => NetworkKit.dio.get('/stats'),
+      request: () => KeystoneNetwork.dio.get('/stats'),
       parser: (json) => Stats.fromJson(json),
     ),
     ApiExecutor.execute<List<Notification>, dynamic>(
-      request: () => NetworkKit.dio.get('/notifications'),
+      request: () => KeystoneNetwork.dio.get('/notifications'),
       parser: (json) => (json as List)
         .map((e) => Notification.fromJson(e))
         .toList(),

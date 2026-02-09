@@ -14,12 +14,12 @@ library keystone_network;
 ///
 /// ```dart
 /// // 1. Initialize (optional)
-/// NetworkKit.initialize(
+/// KeystoneNetwork.initialize(
 ///   baseUrl: 'https://api.example.com',
 ///   interceptors: [
 ///     AuthInterceptor(
 ///       tokenManager: myTokenManager,
-///       dioProvider: NetworkKit.dioProvider,
+///       dioProvider: KeystoneNetwork.dioProvider,
 ///     ),
 ///     RetryInterceptor(),
 ///     LoggingInterceptor(level: LogLevel.body),
@@ -28,7 +28,7 @@ library keystone_network;
 ///
 /// // 2. Make requests
 /// final result = await ApiExecutor.execute<User, dynamic>(
-///   request: () => NetworkKit.dio.get('/user/me'),
+///   request: () => KeystoneNetwork.dio.get('/user/me'),
 ///   parser: (json) => User.fromJson(json),
 /// );
 ///
@@ -52,7 +52,6 @@ export 'core/error_handler.dart';
 export 'core/dio_provider.dart';
 
 // Configuration exports
-export 'config/network_kit.dart';
 export 'config/environment_config.dart';
 
 // Interceptor exports

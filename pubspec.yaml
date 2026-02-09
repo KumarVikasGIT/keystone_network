@@ -1,7 +1,7 @@
 name: keystone_network
 description: "A network package build top on dio, retrofit to MULTIPLY NETWORK productivity."
 version: 0.0.1
-homepage:
+homepage: https://github.com/KumarVikasGIT/keystone_network
 
 environment:
   sdk: ^3.10.8
@@ -22,7 +22,7 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
-flutter:
+#flutter:
 
   # To add assets to your package, add an assets section, like this:
   # assets:

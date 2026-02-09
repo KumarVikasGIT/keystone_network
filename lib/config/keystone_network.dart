@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import '../core/dio_provider.dart';
 
-/// Main NetworkKit configuration class
+/// Main KeystoneNetwork configuration class
 /// 
 /// This is OPTIONAL - developers can still use Dio directly.
-/// NetworkKit provides a convenient way to configure and manage Dio instances.
+/// KeystoneNetwork provides a convenient way to configure and manage Dio instances.
 /// 
 /// Features:
 /// - Simple initialization
@@ -16,27 +16,27 @@ import '../core/dio_provider.dart';
 /// Example:
 /// ```dart
 /// // Initialize once in main()
-/// NetworkKit.initialize(
+/// KeystoneNetwork.initialize(
 ///   baseUrl: 'https://api.example.com',
 ///   interceptors: [
 ///     AuthInterceptor(
 ///       tokenManager: myTokenManager,
-///       dioProvider: NetworkKit.dioProvider,
+///       dioProvider: KeystoneNetwork.dioProvider,
 ///     ),
 ///     LoggingInterceptor(),
 ///   ],
 /// );
 /// 
 /// // Use anywhere in your app
-/// final response = await NetworkKit.dio.get('/users');
+/// final response = await KeystoneNetwork.dio.get('/users');
 /// 
 /// // Or with ApiExecutor
 /// final result = await ApiExecutor.execute<User, dynamic>(
-///   request: () => NetworkKit.dio.get('/user/me'),
+///   request: () => KeystoneNetwork.dio.get('/user/me'),
 ///   parser: (json) => User.fromJson(json),
 /// );
 /// ```
-class NetworkKit {
+class KeystoneNetwork {
   static late Dio _dio;
   static late DioProvider _dioProvider;
 
@@ -49,12 +49,12 @@ class NetworkKit {
   /// ```dart
   /// AuthInterceptor(
   ///   tokenManager: myTokenManager,
-  ///   dioProvider: NetworkKit.dioProvider,
+  ///   dioProvider: KeystoneNetwork.dioProvider,
   /// )
   /// ```
   static DioProvider get dioProvider => _dioProvider;
 
-  /// Initialize NetworkKit with configuration
+  /// Initialize KeystoneNetwork with configuration
   /// 
   /// This should be called once during app startup, typically in main().
   /// 
@@ -70,7 +70,7 @@ class NetworkKit {
   /// 
   /// Example:
   /// ```dart
-  /// NetworkKit.initialize(
+  /// KeystoneNetwork.initialize(
   ///   baseUrl: 'https://api.example.com',
   ///   connectTimeout: Duration(seconds: 30),
   ///   headers: {
@@ -80,7 +80,7 @@ class NetworkKit {
   ///   interceptors: [
   ///     AuthInterceptor(
   ///       tokenManager: myTokenManager,
-  ///       dioProvider: NetworkKit.dioProvider,
+  ///       dioProvider: KeystoneNetwork.dioProvider,
   ///     ),
   ///     LoggingInterceptor(),
   ///   ],
@@ -135,7 +135,7 @@ class NetworkKit {
   /// 
   /// Example:
   /// ```dart
-  /// final paymentApi = NetworkKit.createInstance(
+  /// final paymentApi = KeystoneNetwork.createInstance(
   ///   baseUrl: 'https://payment-api.example.com',
   ///   headers: {'X-Payment-Key': 'xxx'},
   ///   interceptors: [
@@ -143,7 +143,7 @@ class NetworkKit {
   ///   ],
   /// );
   /// 
-  /// final analyticsApi = NetworkKit.createInstance(
+  /// final analyticsApi = KeystoneNetwork.createInstance(
   ///   baseUrl: 'https://analytics-api.example.com',
   ///   headers: {'X-Analytics-Key': 'yyy'},
   /// );
@@ -185,12 +185,12 @@ class NetworkKit {
   /// Create a DioProvider for a custom Dio instance
   /// 
   /// Use this when you need a DioProvider for a Dio instance
-  /// that wasn't created through NetworkKit.
+  /// that wasn't created through KeystoneNetwork.
   /// 
   /// Example:
   /// ```dart
   /// final customDio = Dio(BaseOptions(...));
-  /// final provider = NetworkKit.createDioProvider(customDio);
+  /// final provider = KeystoneNetwork.createDioProvider(customDio);
   /// 
   /// final interceptor = AuthInterceptor(
   ///   tokenManager: myTokenManager,
@@ -201,7 +201,7 @@ class NetworkKit {
     return DefaultDioProvider(dio);
   }
 
-  /// Reset NetworkKit (useful for testing)
+  /// Reset KeystoneNetwork (useful for testing)
   /// 
   /// This clears the singleton instance. Only use this in tests.
   static void reset() {

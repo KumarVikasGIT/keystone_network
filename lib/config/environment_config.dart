@@ -61,7 +61,7 @@ enum Environment {
 /// // Usage
 /// const config = MyConfig(Environment.production);
 ///
-/// NetworkKit.initialize(
+/// KeystoneNetwork.initialize(
 ///   baseUrl: config.baseUrl,
 ///   connectTimeout: config.connectTimeout,
 ///   headers: config.headers,
@@ -102,7 +102,7 @@ abstract class EnvironmentConfig {
 ///   headers: {'X-API-Key': 'xxx'},
 /// );
 ///
-/// NetworkKit.initialize(
+/// KeystoneNetwork.initialize(
 ///   baseUrl: config.baseUrl,
 ///   connectTimeout: config.connectTimeout,
 ///   headers: config.headers,

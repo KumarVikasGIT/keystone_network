@@ -15,10 +15,10 @@ import 'token_manager.dart';
 /// ```dart
 /// final authInterceptor = AuthInterceptor(
 ///   tokenManager: myTokenManager,
-///   dioProvider: NetworkKit.dioProvider,
+///   dioProvider: KeystoneNetwork.dioProvider,
 /// );
 ///
-/// NetworkKit.initialize(
+/// KeystoneNetwork.initialize(
 ///   baseUrl: 'https://api.example.com',
 ///   interceptors: [authInterceptor],
 /// );
@@ -31,7 +31,7 @@ class AuthInterceptor extends Interceptor {
   final TokenManager tokenManager;
 
   /// DioProvider for making retry requests
-  /// Use NetworkKit.dioProvider or create your own
+  /// Use KeystoneNetwork.dioProvider or create your own
   final DioProvider dioProvider;
 
   /// Header key for authorization (default: 'Authorization')

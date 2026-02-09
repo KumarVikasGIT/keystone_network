@@ -2,7 +2,7 @@
 
 **Clean, Generic, Minimal Networking Library for Flutter**
 
-[![pub package](https://img.shields.io/pub/v/network_kit.svg)](https://pub.dev/packages/network_kit)
+[![pub package](https://img.shields.io/pub/v/keystone_network.svg)](https://pub.dev/packages/keystone_network)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-ready networking library that provides type-safe API state management, automatic error handling, smart retry logic, and token management—all in a minimal, tree-shakeable package.
@@ -42,8 +42,8 @@ A production-ready networking library that provides type-safe API state manageme
 
 ```yaml
 dependencies:
-  network_kit: ^1.0.0
-  dio: ^5.4.0
+  keystone_network: ^0.0.1
+  dio: ^5.9.1
 ```
 
 ## 🚀 Quick Start
@@ -52,7 +52,7 @@ dependencies:
 
 ```dart
 import 'package:dio/dio.dart';
-import 'package:network_kit/network_kit.dart';
+import 'package:keystone_network/keystone_network.dart';
 
 // Use your own Dio instance
 final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));
@@ -78,12 +78,12 @@ result.when(
 ```dart
 void main() {
   // Initialize once
-  NetworkKit.initialize(
+  KeystoneNetwork.initialize(
     baseUrl: 'https://api.example.com',
     interceptors: [
       AuthInterceptor(
         tokenManager: myTokenManager,
-        dioProvider: NetworkKit.dioProvider, // ✅ Important!
+        dioProvider: KeystoneNetwork.dioProvider, // ✅ Important!
       ),
       RetryInterceptor(),
       LoggingInterceptor(level: LogLevel.body),
@@ -95,7 +95,7 @@ void main() {
 
 // Use anywhere
 final result = await ApiExecutor.execute<User, dynamic>(
-  request: () => NetworkKit.dio.get('/user/me'),
+  request: () => KeystoneNetwork.dio.get('/user/me'),
   parser: (json) => User.fromJson(json),
 );
 ```
@@ -241,10 +241,10 @@ class MyTokenManager implements TokenManager {
 ```dart
 final authInterceptor = AuthInterceptor(
   tokenManager: MyTokenManager(),
-  dioProvider: NetworkKit.dioProvider, // ✅ Prevents config loss
+  dioProvider: KeystoneNetwork.dioProvider, // ✅ Prevents config loss
 );
 
-NetworkKit.initialize(
+KeystoneNetwork.initialize(
   baseUrl: 'https://api.example.com',
   interceptors: [authInterceptor],
 );
@@ -362,7 +362,7 @@ final config = DefaultEnvironmentConfig(
   baseUrl: 'https://api.example.com',
 );
 
-NetworkKit.initialize(
+KeystoneNetwork.initialize(
   baseUrl: config.baseUrl,
   connectTimeout: config.connectTimeout,
 );
@@ -394,7 +394,7 @@ class AppConfig extends MultiEnvironmentConfig {
 
 // Usage
 const config = AppConfig(Environment.production);
-NetworkKit.initialize(
+KeystoneNetwork.initialize(
   baseUrl: config.baseUrl,
   headers: config.headers,
 );
@@ -480,7 +480,7 @@ LoggingInterceptor(
 ## 📏 Package Size
 
 - **Core only:** ~500 lines
-- **With NetworkKit:** ~550 lines
+- **With KeystoneNetwork:** ~550 lines
 - **All features:** ~880 lines
 - **Tree-shakeable:** Import only what you use
 
