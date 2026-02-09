@@ -62,11 +62,11 @@ class RetryConfig {
 ///
 /// // Custom configuration
 /// final retryInterceptor = RetryInterceptor(
-///   dioProvider: NetworkKit.dioProvider, // ✅ Pass provider
+///   dioProvider: KeystoneNetwork.dioProvider, // ✅ Pass provider
 ///   config: RetryConfig(maxAttempts: 5),
 /// );
 ///
-/// NetworkKit.initialize(
+/// KeystoneNetwork.initialize(
 ///   baseUrl: 'https://api.example.com',
 ///   interceptors: [retryInterceptor],
 /// );

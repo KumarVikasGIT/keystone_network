@@ -45,7 +45,7 @@ class KeystoneNetwork {
   static Dio get dio {
     if (_dio == null) {
       throw StateError(
-        'NetworkKit not initialized. Call NetworkKit.initialize() first.',
+        'KeystoneNetwork not initialized. Call KeystoneNetwork.initialize() first.',
       );
     }
     return _dio!;
@@ -64,7 +64,7 @@ class KeystoneNetwork {
   static DioProvider get dioProvider {
     if (_dioProvider == null) {
       throw StateError(
-        'NetworkKit not initialized. Call NetworkKit.initialize() first.',
+        'KeystoneNetwork not initialized. Call KeystoneNetwork.initialize() first.',
       );
     }
     return _dioProvider!;
@@ -217,7 +217,7 @@ class KeystoneNetwork {
     return DefaultDioProvider(dio);
   }
 
-  /// Reset NetworkKit (for testing purposes only)
+  /// Reset KeystoneNetwork (for testing purposes only)
   ///
   /// **WARNING:** This will close the current Dio instance and clear all state.
   /// Only use this in test tearDown methods.
@@ -225,7 +225,7 @@ class KeystoneNetwork {
   /// Example:
   /// ```dart
   /// tearDown(() {
-  ///   NetworkKit.reset();
+  ///   KeystoneNetwork.reset();
   /// });
   /// ```
   @visibleForTesting

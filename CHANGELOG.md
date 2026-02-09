@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.1] - 2024-02-10
+## [0.1.2] - 2024-02-10
 
 ### 🔥 Critical Fixes (QA Review)
 
@@ -78,12 +78,12 @@ final tokenManager = MyTokenManager(storage, authDio);
 - Enhanced documentation throughout codebase
 - Added comprehensive examples for all fixes
 
-#### Migration Guide (0.1.1 → 0.1.1)
+#### Migration Guide (0.1.2 → 0.1.2)
 
 **Breaking Change:** Update your `RetryInterceptor` initialization:
 
 ```dart
-// Old (0.1.1)
+// Old (0.1.2)
 KeystoneNetwork.initialize(
   baseUrl: 'https://api.example.com',
   interceptors: [
@@ -93,7 +93,7 @@ KeystoneNetwork.initialize(
   ],
 );
 
-// New (0.1.1)
+// New (0.1.2)
 KeystoneNetwork.initialize(
   baseUrl: 'https://api.example.com',
   interceptors: [
@@ -115,7 +115,7 @@ Thanks to our QA team for the thorough review and identifying these critical iss
 
 ---
 
-## [0.1.1] - 2024-02-09
+## [0.1.2] - 2024-02-09
 
 ### 🎉 Initial Release
 

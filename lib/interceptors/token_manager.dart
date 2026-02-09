@@ -53,7 +53,7 @@
 /// }
 ///
 /// // Setup
-/// final authDio = NetworkKit.createInstance(
+/// final authDio = KeystoneNetwork.createInstance(
 ///   baseUrl: 'https://api.example.com',
 ///   interceptors: [
 ///     LoggingInterceptor(), // ✅ Can still have logging
