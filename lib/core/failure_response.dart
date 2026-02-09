@@ -5,20 +5,45 @@ import 'response_code.dart';
 /// Type Parameters:
 ///   E - Custom error data type (optional)
 ///
-/// Example:
-/// ```dart
-/// // Generic failure
-/// final failure = FailureResponse<dynamic>(
-///   ResponseCode.NOT_FOUND,
-///   'User not found',
-/// );
+/// **Equality Note:**
+/// For proper equality comparison, your custom error type `E` should
+/// implement `==` and `hashCode`. Otherwise, equality will use
+/// reference comparison (identity).
 ///
-/// // With custom error data
-/// final failure = FailureResponse<LoginError>(
-///   ResponseCode.BAD_REQUEST,
+/// Example with proper equality:
+/// ```dart
+/// class LoginError {
+///   final String? email;
+///   final String? password;
+///
+///   LoginError({this.email, this.password});
+///
+///   // ✅ Implement equality
+///   @override
+///   bool operator ==(Object other) =>
+///     identical(this, other) ||
+///     other is LoginError &&
+///       other.email == email &&
+///       other.password == password;
+///
+///   @override
+///   int get hashCode => email.hashCode ^ password.hashCode;
+/// }
+///
+/// // Now FailureResponse equality works correctly
+/// final error1 = FailureResponse<LoginError>(
+///   400,
 ///   'Validation failed',
 ///   errorData: LoginError(email: 'Invalid email'),
 /// );
+///
+/// final error2 = FailureResponse<LoginError>(
+///   400,
+///   'Validation failed',
+///   errorData: LoginError(email: 'Invalid email'),
+/// );
+///
+/// print(error1 == error2); // true (because LoginError has equality)
 /// ```
 class FailureResponse<E> {
   /// Error code (HTTP status or custom code)
@@ -28,6 +53,9 @@ class FailureResponse<E> {
   final String message;
 
   /// Optional custom error data
+  ///
+  /// **Note:** For equality to work correctly, E should
+  /// implement proper `==` and `hashCode` operators.
   final E? errorData;
 
   const FailureResponse(
@@ -48,7 +76,7 @@ class FailureResponse<E> {
     return other is FailureResponse<E> &&
         other.code == code &&
         other.message == message &&
-        other.errorData == errorData;
+        other.errorData == errorData; // Uses E's equality if implemented
   }
 
   @override

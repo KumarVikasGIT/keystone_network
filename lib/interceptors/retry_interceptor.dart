@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:dio/dio.dart';
+import '../core/dio_provider.dart';
 
 /// Retry policy configuration
 ///
@@ -52,6 +53,8 @@ class RetryConfig {
 /// - GET, HEAD, PUT, DELETE, OPTIONS, TRACE are retried by default
 /// - POST, PATCH require explicit opt-in via extra['allowRetry'] = true
 ///
+/// **IMPORTANT:** Requires DioProvider injection to maintain interceptors
+///
 /// Example:
 /// ```dart
 /// // Default configuration
@@ -59,38 +62,29 @@ class RetryConfig {
 ///
 /// // Custom configuration
 /// final retryInterceptor = RetryInterceptor(
-///   config: RetryConfig(
-///     maxAttempts: 5,
-///     initialDelay: Duration(milliseconds: 500),
-///     maxDelay: Duration(seconds: 60),
-///     shouldRetry: (error) {
-///       // Only retry on network errors or 5xx
-///       return error.type == DioExceptionType.connectionTimeout ||
-///              (error.response?.statusCode ?? 0) >= 500;
-///     },
-///   ),
+///   dioProvider: NetworkKit.dioProvider, // ✅ Pass provider
+///   config: RetryConfig(maxAttempts: 5),
 /// );
 ///
-/// // Allow retry on POST (use with caution!)
-/// dio.post(
-///   '/submit-payment',
-///   data: {...},
-///   options: Options(
-///     extra: {'allowRetry': true}, // Explicit opt-in
-///   ),
+/// NetworkKit.initialize(
+///   baseUrl: 'https://api.example.com',
+///   interceptors: [retryInterceptor],
 /// );
 /// ```
 class RetryInterceptor extends Interceptor {
   final RetryConfig config;
+  final DioProvider dioProvider;
 
-  RetryInterceptor({RetryConfig? config})
-      : config = config ?? const RetryConfig();
+  RetryInterceptor({
+    RetryConfig? config,
+    required this.dioProvider, // ✅ Now required
+  }) : config = config ?? const RetryConfig();
 
   @override
   void onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
+      DioException err,
+      ErrorInterceptorHandler handler,
+      ) async {
     // Check if should retry
     if (!_shouldRetry(err)) {
       return handler.next(err);
@@ -116,9 +110,9 @@ class RetryInterceptor extends Interceptor {
     // Increment retry count
     err.requestOptions.extra['retryCount'] = retryCount + 1;
 
-    // Retry the request
+    // Retry the request using DioProvider (maintains all interceptors!)
     try {
-      final response = await Dio().fetch(err.requestOptions);
+      final response = await dioProvider.dio.fetch(err.requestOptions); // ✅ Fixed!
       return handler.resolve(response);
     } on DioException catch (e) {
       // If retry fails, it will go through onError again
@@ -205,15 +199,10 @@ class RetryInterceptor extends Interceptor {
 
   /// Log retry attempt (optional, can be customized)
   void _logRetry(DioException err, int retryCount, Duration delay) {
-    // You can integrate with your logging system here
-    // For now, this is a no-op to avoid dependency on logging
-    // Uncomment if you want to see retry logs:
-    /*
     print(
       'Retrying ${err.requestOptions.method} ${err.requestOptions.uri} '
       '(attempt ${retryCount + 1}/${config.maxAttempts}) '
       'after ${delay.inMilliseconds}ms delay',
     );
-    */
   }
 }

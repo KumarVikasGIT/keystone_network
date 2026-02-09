@@ -3,12 +3,13 @@
 /// Implement this interface to integrate with your auth system.
 /// The AuthInterceptor will use this to manage tokens.
 ///
-/// Example implementation:
+/// **Example Implementation:**
 /// ```dart
 /// class MyTokenManager implements TokenManager {
 ///   final SecureStorage _storage;
+///   final Dio _authDio; // ✅ Dedicated Dio instance for auth
 ///
-///   MyTokenManager(this._storage);
+///   MyTokenManager(this._storage, this._authDio);
 ///
 ///   @override
 ///   Future<String?> getAccessToken() async {
@@ -26,8 +27,9 @@
 ///       final refreshToken = await getRefreshToken();
 ///       if (refreshToken == null) return false;
 ///
-///       final response = await Dio().post(
-///         'https://api.example.com/auth/refresh',
+///       // ✅ Use dedicated auth Dio (without AuthInterceptor to avoid loops)
+///       final response = await _authDio.post(
+///         '/auth/refresh',
 ///         data: {'refresh_token': refreshToken},
 ///       );
 ///
@@ -49,6 +51,17 @@
 ///     await _storage.delete(key: 'refresh_token');
 ///   }
 /// }
+///
+/// // Setup
+/// final authDio = NetworkKit.createInstance(
+///   baseUrl: 'https://api.example.com',
+///   interceptors: [
+///     LoggingInterceptor(), // ✅ Can still have logging
+///     // ❌ DON'T add AuthInterceptor here (infinite loop)
+///   ],
+/// );
+///
+/// final tokenManager = MyTokenManager(secureStorage, authDio);
 /// ```
 abstract class TokenManager {
   /// Get the current access token

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import '../core/dio_provider.dart';
 
 /// Main KeystoneNetwork configuration class
@@ -37,11 +38,18 @@ import '../core/dio_provider.dart';
 /// );
 /// ```
 class KeystoneNetwork {
-  static late Dio _dio;
-  static late DioProvider _dioProvider;
+  static Dio? _dio;
+  static DioProvider? _dioProvider;
 
   /// Get the configured Dio instance
-  static Dio get dio => _dio;
+  static Dio get dio {
+    if (_dio == null) {
+      throw StateError(
+        'NetworkKit not initialized. Call NetworkKit.initialize() first.',
+      );
+    }
+    return _dio!;
+  }
 
   /// Get the DioProvider for use with interceptors
   /// 
@@ -52,7 +60,15 @@ class KeystoneNetwork {
   ///   dioProvider: KeystoneNetwork.dioProvider,
   /// )
   /// ```
-  static DioProvider get dioProvider => _dioProvider;
+
+  static DioProvider get dioProvider {
+    if (_dioProvider == null) {
+      throw StateError(
+        'NetworkKit not initialized. Call NetworkKit.initialize() first.',
+      );
+    }
+    return _dioProvider!;
+  }
 
   /// Initialize KeystoneNetwork with configuration
   /// 
@@ -113,11 +129,11 @@ class KeystoneNetwork {
     );
 
     // Create DioProvider for interceptors
-    _dioProvider = DefaultDioProvider(_dio);
+    _dioProvider = DefaultDioProvider(_dio!);
 
     // Add interceptors
     if (interceptors.isNotEmpty) {
-      _dio.interceptors.addAll(interceptors);
+      _dio!.interceptors.addAll(interceptors);
     }
   }
 
@@ -201,10 +217,30 @@ class KeystoneNetwork {
     return DefaultDioProvider(dio);
   }
 
-  /// Reset KeystoneNetwork (useful for testing)
-  /// 
-  /// This clears the singleton instance. Only use this in tests.
+  /// Reset NetworkKit (for testing purposes only)
+  ///
+  /// **WARNING:** This will close the current Dio instance and clear all state.
+  /// Only use this in test tearDown methods.
+  ///
+  /// Example:
+  /// ```dart
+  /// tearDown(() {
+  ///   NetworkKit.reset();
+  /// });
+  /// ```
+  @visibleForTesting
   static void reset() {
-    _dio.close(force: true);
+    // Safely close existing Dio instance
+    if (_dio != null) {
+      try {
+        _dio!.close(force: true);
+      } catch (e) {
+        // Ignore errors during cleanup
+      }
+    }
+
+    // Reset to null (not creating new instance)
+    _dio = null;
+    _dioProvider = null;
   }
 }

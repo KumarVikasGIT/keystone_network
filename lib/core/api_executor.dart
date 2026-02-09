@@ -3,57 +3,34 @@ import 'api_state.dart';
 import 'error_handler.dart';
 import 'failure_response.dart';
 
-/// Generic API executor that handles all network requests
-/// 
-/// Type Parameters:
-///   T - Success response type
-///   E - Custom error type (optional)
-/// 
-/// Features:
-/// - Automatic error handling
-/// - Type-safe success and error parsing
-/// - Stream-based loading state management
-/// - Network error detection
-/// - Cancel token support
-/// 
-/// Example:
-/// ```dart
-/// // Simple usage
-/// final result = await ApiExecutor.execute<User, dynamic>(
-///   request: () => dio.get('/user/me'),
-///   parser: (json) => User.fromJson(json),
-/// );
-/// 
-/// // With custom error type
-/// final result = await ApiExecutor.execute<User, LoginError>(
-///   request: () => dio.post('/login', data: {...}),
-///   parser: (json) => User.fromJson(json['user']),
-///   errorParser: (json) => LoginError.fromJson(json),
-/// );
-/// 
-/// // As stream for loading state
-/// ApiExecutor.executeAsStateStream<List<User>, dynamic>(
-///   request: () => dio.get('/users'),
-///   parser: (json) => (json as List).map((e) => User.fromJson(e)).toList(),
-/// ).listen((state) {
-///   state.when(
-///     idle: () => {},
-///     loading: () => showLoader(),
-///     success: (users) => displayUsers(users),
-///     failed: (error) => showError(error.message),
-///     networkError: (error) => showNoInternet(),
-///   );
-/// });
-/// ```
 class ApiExecutor {
-  /// Execute a network request as a state stream (emits loading → success/error)
-  /// 
-  /// This is the recommended method when you want automatic loading state management.
-  /// The stream will emit:
-  /// 1. Loading state immediately
-  /// 2. Success or Error state when request completes
-  /// 
-  /// Returns a Stream that emits ApiState updates
+  /// Execute a network request as a state stream
+  ///
+  /// **State Emission:**
+  /// 1. Emits `loading` state immediately
+  /// 2. Emits `success` or `failed/networkError` when request completes
+  ///
+  /// **Note:** This stream does NOT emit `idle` state.
+  /// It begins from `loading` and ends at a final state.
+  /// If you need idle state, manage it separately in your UI.
+  ///
+  /// Example:
+  /// ```dart
+  /// // In StatefulWidget
+  /// ApiState<User, dynamic> _state = ApiState.idle(); // Manual idle
+  ///
+  /// void loadData() {
+  ///   ApiExecutor.executeAsStateStream<User, dynamic>(
+  ///     request: () => dio.get('/user'),
+  ///     parser: (json) => User.fromJson(json),
+  ///   ).listen((state) {
+  ///     setState(() => _state = state);
+  ///   });
+  /// }
+  ///
+  /// // Stream will emit: loading → success/failed
+  /// // Your _state starts as idle, then updates to stream values
+  /// ```
   static Stream<ApiState<T, E>> executeAsStateStream<T, E>({
     required Future<Response> Function() request,
     required T Function(dynamic json) parser,
@@ -90,9 +67,10 @@ class ApiExecutor {
     }
   }
 
-  /// Execute a network request as a state stream (emits loading → success/error)
-  /// 
-  /// Deprecated: Use executeAsStateStream instead for clearer naming
+  /// Execute a network request as a state stream
+  ///
+  /// **Deprecated:** Use `executeAsStateStream` for clearer semantics.
+  /// The name "executeAsStream" was ambiguous about state emission.
   @Deprecated('Use executeAsStateStream instead. Will be removed in v2.0.0')
   static Stream<ApiState<T, E>> executeAsStream<T, E>({
     required Future<Response> Function() request,
@@ -109,11 +87,8 @@ class ApiExecutor {
   }
 
   /// Execute request and return final state (no loading emission)
-  /// 
-  /// Use this when you manage loading state yourself or when you don't need
-  /// the intermediate loading state.
-  /// 
-  /// Returns the final ApiState (success, failed, or networkError)
+  ///
+  /// Use this when you manage loading state yourself.
   static Future<ApiState<T, E>> execute<T, E>({
     required Future<Response> Function() request,
     required T Function(dynamic json) parser,
