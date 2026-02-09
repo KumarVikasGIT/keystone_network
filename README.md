@@ -2,7 +2,7 @@
 
 **Clean, Generic, Minimal Networking Library for Flutter**
 
-[![pub package](https://img.shields.io/pub/v/network_kit.svg)](https://pub.dev/packages/network_kit)
+[![pub package](https://img.shields.io/pub/v/keystone_network.svg)](https://pub.dev/packages/keystone_network)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-ready networking library that provides type-safe API state management, automatic error handling, smart retry logic, and token management—all in a minimal, tree-shakeable package.
@@ -42,8 +42,8 @@ A production-ready networking library that provides type-safe API state manageme
 
 ```yaml
 dependencies:
-  network_kit: ^1.0.0
-  dio: ^5.4.0
+  keystone_network: ^0.0.1
+  dio: ^5.9.1
 ```
 
 ## 🚀 Quick Start
@@ -52,7 +52,7 @@ dependencies:
 
 ```dart
 import 'package:dio/dio.dart';
-import 'package:network_kit/network_kit.dart';
+import 'package:keystone_network/keystone_network.dart';
 
 // Use your own Dio instance
 final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));

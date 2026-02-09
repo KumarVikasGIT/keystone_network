@@ -7,8 +7,8 @@ A complete, production-ready Flutter networking library with all critical improv
 ## 📦 Package Structure
 
 ```
-core/
-├── network_kit/
+keystone_network/
+├── lib/
 │   ├── core/                           # Core (Required) - 410 lines
 │   │   ├── api_state.dart              # Sealed class state management
 │   │   ├── api_executor.dart           # Clean request executor
@@ -19,7 +19,7 @@ core/
 │   │   └── dio_provider.dart           # ✨ NEW: Prevents config loss
 │   │
 │   ├── config/                         # Configuration (Optional) - 140 lines
-│   │   ├── network_kit.dart            # Main setup class
+│   │   ├── keystone_network.dart            # Main setup class
 │   │   └── environment_config.dart     # Multi-env configuration
 │   │
 │   ├── interceptors/                   # Interceptors (Optional) - 330 lines
@@ -28,7 +28,7 @@ core/
 │   │   ├── logging_interceptor.dart    # ✨ IMPROVED: Request ID tracking
 │   │   └── retry_interceptor.dart      # ✨ IMPROVED: Idempotency guard
 │   │
-│   └── network_kit.dart                # Main export file
+│   └── keystone_network.dart                # Main export file
 │
 ├── example/                            # Complete Examples
 │   ├── basic_usage.dart                # Minimal setup

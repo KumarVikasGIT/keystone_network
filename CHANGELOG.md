@@ -81,7 +81,7 @@ All notable changes to this project will be documented in this file.
 ### 📦 Package Structure
 
 ```
-network_kit/
+keystone_network/
 ├── lib/
 │   ├── core/                    # Core functionality (~410 lines)
 │   │   ├── api_state.dart
@@ -92,14 +92,14 @@ network_kit/
 │   │   ├── response_message.dart
 │   │   └── dio_provider.dart
 │   ├── config/                  # Configuration (~140 lines)
-│   │   ├── network_kit.dart
+│   │   ├── keystone_network.dart
 │   │   └── environment_config.dart
 │   ├── interceptors/            # Interceptors (~330 lines)
 │   │   ├── auth_interceptor.dart
 │   │   ├── logging_interceptor.dart
 │   │   ├── retry_interceptor.dart
 │   │   └── token_manager.dart
-│   └── network_kit.dart         # Main export
+│   └── keystone_network.dart         # Main export
 ├── example/                     # Examples
 │   ├── basic_usage.dart
 │   ├── complete_setup.dart
