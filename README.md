@@ -42,7 +42,7 @@ A production-ready networking library that provides type-safe API state manageme
 
 ```yaml
 dependencies:
-  keystone_network: ^0.0.1
+  keystone_network: ^0.1.0
   dio: ^5.9.1
 ```
 
