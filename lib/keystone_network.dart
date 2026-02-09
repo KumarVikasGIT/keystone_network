@@ -1,6 +1,6 @@
 library keystone_network;
 
-/// Network Kit - Clean, Generic, Minimal Networking Library for Flutter
+/// Keystone Network - Clean, Generic, Minimal Networking Library for Flutter
 ///
 /// A production-ready networking library that provides:
 /// - Type-safe API state management

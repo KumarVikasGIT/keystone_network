@@ -1,4 +1,4 @@
-# 🚀 Network Kit
+# 🚀 Keystone Network
 
 **Clean, Generic, Minimal Networking Library for Flutter**
 
@@ -18,7 +18,7 @@ A production-ready networking library that provides type-safe API state manageme
 - **🎨 Optional Features** - Use only what you need
 - **🛡️ Type-Safe Errors** - Custom error types with full type safety
 
-## 🎯 Why Network Kit?
+## 🎯 Why Keystone Network?
 
 ### vs Vanilla Dio
 ✅ Type-safe state management  

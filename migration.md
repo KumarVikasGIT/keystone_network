@@ -1,6 +1,6 @@
 # Migration Guide
 
-This guide helps you migrate from vanilla Dio or other networking solutions to Network Kit.
+This guide helps you migrate from vanilla Dio or other networking solutions to Keystone Network.
 
 ## Table of Contents
 - [From Vanilla Dio](#from-vanilla-dio)
@@ -275,7 +275,7 @@ final service = ApiService(dio);
 final user = await service.getUser('123');
 ```
 
-#### After (Network Kit)
+#### After (Keystone Network)
 ```dart
 // No code generation needed!
 class UserApi {
