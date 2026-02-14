@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        flutter-version: ['3.16.0', '3.19.0']
+        flutter-version: ['3.38.0', '3.41.0']
 
     steps:
       - name: Checkout repository
@@ -75,7 +75,7 @@ jobs:
           retention-days: 30
 
       - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.flutter-version == '3.19.0'
+        if: matrix.os == 'ubuntu-latest' && matrix.flutter-version == '3.38.0'
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info
@@ -96,7 +96,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.24.0'
           channel: 'stable'
           cache: true
 
@@ -160,7 +160,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.27.0'
           channel: 'stable'
           cache: true
 
@@ -456,7 +456,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.24.0'
           channel: 'stable'
 
       - name: Install dependencies
@@ -479,7 +479,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.35.1'
           channel: 'stable'
 
       - name: Install dependencies
