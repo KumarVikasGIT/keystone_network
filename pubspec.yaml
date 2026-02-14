@@ -4,7 +4,7 @@ version: 0.1.3
 homepage: https://github.com/KumarVikasGIT/keystone_network
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
