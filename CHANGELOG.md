@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2024-02-14
+
+- Added Tests to make code more stable
+- Dart sdk support fix
+
 ## [0.1.2] - 2024-02-10
 
 ### 🔥 Critical Fixes (QA Review)
