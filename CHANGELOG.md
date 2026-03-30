@@ -1,283 +1,207 @@
-# Changelog
+# keystone_network • Changelog
 
-All notable changes to this project will be documented in this file.
-
-## [0.1.3] - 2024-02-14
-
-- Added Tests to make code more stable
-- Dart sdk support fix
-
-## [0.1.2] - 2024-02-10
-
-### 🔥 Critical Fixes (QA Review)
-
-This release addresses 5 critical issues identified during QA review that improve production safety and reliability.
-
-#### Fixed Issues
-
-**1. ✅ RetryInterceptor DioProvider Injection (CRITICAL)**
-- **Problem:** `RetryInterceptor` was creating new `Dio()` instances directly, causing loss of all interceptors (auth, logging, config) during retries
-- **Impact:** Retried requests would bypass authentication, logging wouldn't work, configuration was lost
-- **Fix:** Added required `DioProvider` parameter to `RetryInterceptor` constructor
-- **Breaking Change:** `RetryInterceptor` now requires `dioProvider` parameter
-```dart
-// Before (BROKEN)
-RetryInterceptor(config: RetryConfig(...))
-
-// After (FIXED)
-RetryInterceptor(
-  dioProvider: KeystoneNetwork.dioProvider,
-  config: RetryConfig(...),
-)
-```
-
-**2. ✅ Documentation: executeAsStateStream Behavior**
-- **Problem:** Users expected `idle` state emission but stream never emits it
-- **Fix:** Added clear documentation that stream emits `loading → success/error` only
-- **Note:** If you need `idle` state, manage it manually in your UI before calling the stream
-
-**3. ✅ KeystoneNetwork.reset() Safety**
-- **Problem:** `reset()` could crash if called before `initialize()` or throw errors during cleanup
-- **Fix:** Added null checks and error handling with `@visibleForTesting` annotation
-- **Impact:** Tests are now safer and won't crash during teardown
-```dart
-@visibleForTesting
-static void reset() {
-  if (_dio != null) {
-    try {
-      _dio!.close(force: true);
-    } catch (e) {
-      // Safely ignore cleanup errors
-    }
-  }
-  _dio = null;
-  _dioProvider = null;
-}
-```
-
-**4. ✅ TokenManager Example Documentation**
-- **Problem:** Example showed using raw `Dio()` in `refreshToken()` which loses configuration
-- **Fix:** Updated documentation to show using dedicated auth Dio instance
-- **Best Practice:** Create separate Dio instance for auth endpoints without AuthInterceptor to avoid infinite loops
-```dart
-// Now documented properly
-final authDio = KeystoneNetwork.createInstance(
-  baseUrl: 'https://api.example.com',
-  interceptors: [
-    LoggingInterceptor(), // ✅ Can still log
-    // ❌ DON'T add AuthInterceptor (infinite loop)
-  ],
-);
-
-final tokenManager = MyTokenManager(storage, authDio);
-```
-
-**5. ✅ FailureResponse Generic Equality Documentation**
-- **Problem:** Generic type `E` equality wasn't documented, could cause unexpected behavior
-- **Fix:** Added documentation explaining that custom error types should implement `==` and `hashCode`
-- **Impact:** Users now understand equality requirements for proper error comparison
-
-#### Code Quality Improvements
-- Added `@visibleForTesting` annotation to test-only methods
-- Improved error handling in cleanup code
-- Enhanced documentation throughout codebase
-- Added comprehensive examples for all fixes
-
-#### Migration Guide (0.1.2 → 0.1.2)
-
-**Breaking Change:** Update your `RetryInterceptor` initialization:
-
-```dart
-// Old (0.1.2)
-KeystoneNetwork.initialize(
-  baseUrl: 'https://api.example.com',
-  interceptors: [
-    RetryInterceptor(
-      config: RetryConfig(maxAttempts: 3),
-    ),
-  ],
-);
-
-// New (0.1.2)
-KeystoneNetwork.initialize(
-  baseUrl: 'https://api.example.com',
-  interceptors: [
-    RetryInterceptor(
-      dioProvider: KeystoneNetwork.dioProvider, // ✅ Add this
-      config: RetryConfig(maxAttempts: 3),
-    ),
-  ],
-);
-```
-
-#### QA Assessment
-- **Before:** 9.2/10
-- **After:** 9.5/10
-- **Status:** ✅ Production Ready
-
-### 🙏 Special Thanks
-Thanks to our QA team for the thorough review and identifying these critical issues before they reached production!
+All notable changes to this project are documented here. Versions follow Semantic Versioning (MAJOR.MINOR.PATCH). Breaking changes are always called out explicitly.
 
 ---
 
-## [0.1.2] - 2024-02-09
+## Legend
 
-### 🎉 Initial Release
+- **ADDED** — New features or APIs  
+- **CHANGED** — Behaviour change (non-breaking)  
+- **DEPRECATED** — Will be removed in a future major version  
+- **BREAKING** — Requires code changes  
 
-#### Core Features
-- ✅ **ApiState** - Type-safe state management for API requests
-- ✅ **ApiExecutor** - Clean request execution with automatic error handling
-- ✅ **FailureResponse** - Generic error response with custom error type support
-- ✅ **ErrorHandler** - Automatic Dio exception to FailureResponse conversion
+---
 
-#### Advanced Features
-- ✅ **DioProvider** - Prevents interceptor configuration loss (fixes 90% of broken implementations)
-- ✅ **KeystoneNetwork** - Optional configuration helper for easy setup
-- ✅ **Environment Config** - Multi-environment configuration support
+## v1.0.0 — 2026-03-30
 
-#### Interceptors
-- ✅ **AuthInterceptor** - Production-ready token management with automatic refresh
-    - Token injection on requests
-    - Automatic refresh on 401 errors
-    - Request queuing during refresh
-    - Race condition prevention
-    - Skip auth for public endpoints
+Major stable release. Adds four production-grade features that were missing from every real project using v0.1.x, plus a type-safe error hierarchy and Flutter UI helpers.
 
-- ✅ **RetryInterceptor** - Smart retry with idempotency protection
-    - Exponential backoff
-    - Configurable retry conditions
-    - Idempotency guard (prevents double payments!)
-    - Safe by default (GET, PUT, DELETE retried automatically)
-    - POST/PATCH require explicit opt-in
+---
 
-- ✅ **LoggingInterceptor** - Clean logging with security
-    - Configurable log levels
-    - Sensitive data redaction
-    - Request ID tracking for distributed debugging
-    - Custom log function support
+### ApiState — Empty State & UI Helpers
 
-#### Developer Experience
-- ✅ Stream-based loading state management (`executeAsStateStream`)
-- ✅ Pattern matching for state handling
-- ✅ Type-safe custom error types
-- ✅ Comprehensive error detection extensions
-- ✅ Tree-shakeable architecture
-- ✅ Minimal core (~500 lines)
+- **ADDED** ApiState.empty() — new sealed state for successful but empty responses  
+- **ADDED** ApiState<T,E>.when() — empty parameter added (required)  
+- **ADDED** ApiState<T,E>.maybeWhen() — empty parameter added (optional; falls through to orElse)  
+- **ADDED** ApiState<T,E>.map() — empty case maps to ApiState.empty() on the output type  
+- **ADDED** extension ApiStateBuildWidget.buildWidget() — renders a Flutter Widget from state  
+- **ADDED** ApiStateWidget<T,E> — StatelessWidget wrapper  
 
-#### Safety & Security
-- ✅ Network error detection extension on `FailureResponse`
-- ✅ Auth error, validation error, server error detection
-- ✅ Automatic sensitive data redaction in logs
-- ✅ Idempotency protection to prevent duplicate requests
-- ✅ Token manager interface for secure token storage
-
-#### Documentation
-- ✅ Comprehensive README with examples
-- ✅ Complete API documentation
-- ✅ Example files for common use cases:
-    - Basic usage
-    - Complete production setup
-    - Custom error handling
-- ✅ Best practices guide
-
-### 🔧 Technical Improvements
-
-#### Fixed Issues
-- ✅ Removed duplicate try-catch in ApiExecutor
-- ✅ Fixed DioProvider injection to prevent configuration loss in interceptors
-- ✅ Moved network error detection to FailureResponse extension (better OOP)
-- ✅ Added request ID support to LoggingInterceptor
-- ✅ Added idempotency guard to RetryInterceptor
-
-#### Code Quality
-- ✅ No magic numbers (moved to constants)
-- ✅ Proper error handling with try-catch around error parsing
-- ✅ Clean separation of concerns
-- ✅ Comprehensive documentation
-- ✅ Type-safe generics throughout
-
-### 📦 Package Structure
-
-```
-keystone_network/
-├── lib/
-│   ├── core/                    # Core functionality (~410 lines)
-│   │   ├── api_state.dart
-│   │   ├── api_executor.dart
-│   │   ├── error_handler.dart
-│   │   ├── failure_response.dart
-│   │   ├── response_code.dart
-│   │   ├── response_message.dart
-│   │   └── dio_provider.dart
-│   ├── config/                  # Configuration (~140 lines)
-│   │   ├── keystone_network.dart
-│   │   └── environment_config.dart
-│   ├── interceptors/            # Interceptors (~330 lines)
-│   │   ├── auth_interceptor.dart
-│   │   ├── logging_interceptor.dart
-│   │   ├── retry_interceptor.dart
-│   │   └── token_manager.dart
-│   └── keystone_network.dart         # Main export
-├── example/                     # Examples
-│   ├── basic_usage.dart
-│   ├── complete_setup.dart
-│   └── custom_error.dart
-└── test/                        # Tests (coming soon)
-```
-
-### 🎯 What Makes This Special
-
-1. **Actually Safe Auth** - 90% of auth interceptors are broken; ours isn't
-2. **Idempotency by Default** - Prevents double payments/submissions
-3. **True Generics** - Works with ANY API structure
-4. **Minimal Core** - < 500 lines for basic usage
-5. **Production Battle-Tested** - Not academic examples
-
-### 🚀 Migration from Vanilla Dio
+- **BREAKING** ApiState.when() — empty parameter is now required  
 
 ```dart
-// Before (Vanilla Dio)
-try {
-final response = await dio.get('/users');
-final users = (response.data as List)
-    .map((e) => User.fromJson(e))
-    .toList();
-setState(() {
-_users = users;
-_loading = false;
-});
-} on DioException catch (e) {
-setState(() {
-_error = e.message;
-_loading = false;
-});
-}
-
-// After (Keystone Network)
-final result = await ApiExecutor.execute<List<User>, dynamic>(
-request: () => dio.get('/users'),
-parser: (json) => (json as List).map((e) => User.fromJson(e)).toList(),
+state.when(
+  idle:         () => ...,
+  loading:      () => ...,
+  success:      (data) => ...,
+  empty:        () => ...,   // ← ADD THIS
+  failed:       (e) => ...,
+  networkError: (e) => ...
 );
+````
 
-result.when(
-idle: () {},
-loading: () => setState(() => _loading = true),
-success: (users) => setState(() {
-_users = users;
-_loading = false;
-}),
-failed: (error) => setState(() {
-_error = error.message;
-_loading = false;
-}),
-networkError: (error) => showNoInternetDialog(),
-);
+---
+
+### ApiError — Type-Safe Error Hierarchy
+
+* **ADDED** ApiError — sealed class with 14 subtypes
+* **ADDED** NetworkError, TimeoutError, BadCertificateError, CancelledError
+* **ADDED** UnauthorizedError, ForbiddenError
+* **ADDED** BadRequestError, NotFoundError, MethodNotAllowedError, ConflictError
+* **ADDED** ValidationError — includes helpers: `fields`, `allMessages`, `fieldMessage(key)`
+* **ADDED** ServerError — 5xx errors
+* **ADDED** AppError, UnknownError
+* **ADDED** ApiErrorX extension — helper methods and pattern matching
+* **ADDED** ErrorHandler.apiError
+
+---
+
+### ApiExecutor — Upload & Empty Detection
+
+* **ADDED** ApiExecutor.upload<T,E>() — multipart upload
+* **ADDED** ApiExecutor.uploadStream<T,E>() — streaming upload
+* **ADDED** emptyCheck parameter — emits empty state
+* **ADDED** cache parameter — integrates caching
+* **DEPRECATED** executeAsStream() → renamed to executeAsStateStream()
+
+---
+
+### UploadState<T, E>
+
+* **ADDED** UploadState — states:
+
+    * idle
+    * uploading(progress)
+    * processing
+    * success
+    * failed
+    * networkError
+
+* **ADDED** pattern matching: when(), maybeWhen()
+
+* **ADDED** helpers: isIdle, isUploading, isProcessing, isSuccess, isFailed, isNetworkError
+
+---
+
+### ApiPaginator<T, E>
+
+* **ADDED** Page-based and cursor-based pagination
+
+* **ADDED** loadFirst(), loadNext(), reset()
+
+* **ADDED** listeners: addListener(), removeListener()
+
+* **ADDED** properties:
+
+    * items
+    * hasMore
+    * isLoading
+    * isEmpty
+    * currentPage
+    * state
+
+* **ADDED** PaginatedListView widget
+
+---
+
+### Cache Layer
+
+* **ADDED** CachePolicy:
+
+    * networkFirst
+    * cacheFirst
+    * cacheOnly
+    * networkOnly
+    * cacheAndNetwork
+
+* **ADDED** CacheConfig
+
+* **ADDED** CacheStorage interface
+
+* **ADDED** InMemoryCacheStorage
+
+* **ADDED** ApiCache global facade
+
+---
+
+### keystone_network.dart barrel
+
+* **ADDED** Exports:
+
+    * api_error.dart
+    * upload_state.dart
+    * api_paginator.dart
+    * api_cache.dart
+    * paginated_list_view.dart
+
+* **ADDED** Dio re-exports:
+
+    * FormData
+    * MultipartFile
+
+---
+
+## v0.1.3 — 2026-03-15
+
+Maintenance release.
+
+* **FIXED** RetryInterceptor losing interceptors
+* **BREAKING** RetryInterceptor now requires dioProvider
+
+```dart
+// Old
+RetryInterceptor()
+
+// New
+RetryInterceptor(dioProvider: KeystoneNetwork.dioProvider)
 ```
 
-### 🙏 Credits
+---
 
-Special thanks to the Flutter community and the feedback that helped shape this library.
+## v0.1.2 — 2026-02-28
 
-### 📝 License
+* **ADDED** MultiEnvironmentConfig
+* **ADDED** LoggingInterceptor redaction
+* **ADDED** Request ID tracking
+* **ADDED** DefaultEnvironmentConfig
 
-MIT License - See LICENSE file for details
+---
+
+## v0.1.1 — 2026-02-10
+
+* **ADDED** AuthInterceptor
+* **ADDED** Request queuing during token refresh
+* **ADDED** TokenManager interface
+* **ADDED** skipAuth option
+* **ADDED** tokenFormatter
+
+---
+
+## v0.1.0 — 2026-01-20
+
+Initial release.
+
+* **ADDED** ApiState<T,E>
+
+* **ADDED** ApiExecutor methods:
+
+    * execute()
+    * executeAsStream()
+    * executeRaw()
+
+* **ADDED** ErrorHandler
+
+* **ADDED** FailureResponse
+
+* **ADDED** ResponseCode / ResponseMessage
+
+* **ADDED** LoggingInterceptor
+
+* **ADDED** RetryInterceptor
+
+* **ADDED** EnvironmentConfig
+
+* **ADDED** KeystoneNetwork
+
+* **ADDED** DioProvider
