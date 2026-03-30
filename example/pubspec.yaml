@@ -1,0 +1,39 @@
+name: keystone_network_example
+description: >
+  Full example project demonstrating all keystone_network v1.0.0 features:
+  ApiState (with empty state), buildWidget(), type-safe ApiError,
+  upload with progress, pagination, and the cache layer.
+
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Core — only required dependency
+  keystone_network:
+    path: ../
+
+  # Optional: persistent cache storage backends (choose one)
+  # hive: ^2.2.3
+  # shared_preferences: ^2.2.2
+
+  # Optional: file picking for the upload demo
+  # image_picker: ^1.0.7
+  # file_picker: ^6.1.1
+
+  # Optional: secure token storage
+  # flutter_secure_storage: ^9.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

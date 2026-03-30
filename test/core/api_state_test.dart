@@ -92,6 +92,9 @@ void main() {
           success: (data) => 'success: $data',
           failed: (error) => 'failed: ${error.message}',
           networkError: (error) => 'network: ${error.message}',
+          empty: () {
+            return 'empty';
+          },
         );
         expect(result, equals('idle'));
       });
@@ -103,7 +106,7 @@ void main() {
           loading: () => 'loading',
           success: (data) => 'success: $data',
           failed: (error) => 'failed: ${error.message}',
-          networkError: (error) => 'network: ${error.message}',
+          networkError: (error) => 'network: ${error.message}', empty: () => 'empty',
         );
         expect(result, equals('loading'));
       });
@@ -115,7 +118,7 @@ void main() {
           loading: () => 'loading',
           success: (data) => 'success: $data',
           failed: (error) => 'failed: ${error.message}',
-          networkError: (error) => 'network: ${error.message}',
+          networkError: (error) => 'network: ${error.message}', empty: () => 'empty',
         );
         expect(result, equals('success: test data'));
       });
@@ -129,7 +132,7 @@ void main() {
           loading: () => 'loading',
           success: (data) => 'success: $data',
           failed: (error) => 'failed: ${error.message}',
-          networkError: (error) => 'network: ${error.message}',
+          networkError: (error) => 'network: ${error.message}', empty:  () => 'empty',
         );
         expect(result, equals('failed: Bad Request'));
       });
@@ -143,7 +146,7 @@ void main() {
           loading: () => 'loading',
           success: (data) => 'success: $data',
           failed: (error) => 'failed: ${error.message}',
-          networkError: (error) => 'network: ${error.message}',
+          networkError: (error) => 'network: ${error.message}', empty: () => 'empty',
         );
         expect(result, equals('network: No Internet'));
       });

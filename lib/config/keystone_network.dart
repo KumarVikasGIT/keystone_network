@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
+
 import '../core/dio_provider.dart';
 
 /// Main KeystoneNetwork configuration class
