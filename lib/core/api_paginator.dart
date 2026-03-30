@@ -172,7 +172,7 @@ class ApiPaginator<T, E> {
 
     try {
       final response = _pageRequest != null
-          ? await _pageRequest!(_currentPage)
+          ? await _pageRequest(_currentPage)
           : await _cursorRequest!(_nextCursor);
 
       final newItems = _parseList(response.data);
@@ -181,7 +181,7 @@ class ApiPaginator<T, E> {
 
       // Update cursor or page counter
       if (_cursorExtractor != null) {
-        _nextCursor = _cursorExtractor!(response.data);
+        _nextCursor = _cursorExtractor(response.data);
         _hasMore = _nextCursor != null;
       } else {
         _hasMore = newItems.length >= pageSize;
@@ -211,7 +211,7 @@ class ApiPaginator<T, E> {
   }
 
   List<T> _parseList(dynamic data) {
-    if (_listParser != null) return _listParser!(data);
+    if (_listParser != null) return _listParser(data);
     if (data is List) return data.map(_parser).toList();
     throw FormatException(
       'ApiPaginator: response data is not a List and no listParser was provided. '

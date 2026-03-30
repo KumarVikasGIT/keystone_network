@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import '../core/failure_response.dart';
-import '../core/api_error.dart';
 
 /// Represents the state of an API request
 ///
